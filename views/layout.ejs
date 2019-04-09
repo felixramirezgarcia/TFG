@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel='stylesheet' href='https://bootswatch.com/4/lux/bootstrap.min.css'>
+    <title>InfoJaus</title>
+</head> 
+<body>
+    <!------------------  nav  ------------------------->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">InfoJaus</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <%if (user) {  %> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Profile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Exit</a>
+                    </li>
+                <% } else { %> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signin">SignIn</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">SignUp</a>
+                    </li>
+                <% } %>
+
+                
+            </ul>
+        </div>
+    </nav>
+
+    <!------------------  body  ------------------------->
+    <div class="container">
+        <% if(signupMessage.length > 0) {  %>
+            <div class="alert alert-danger">
+                <%= signupMessage %>
+            </div>
+        <% } %>
+        <% if(signinMessage.length > 0) {  %>
+            <div class="alert alert-danger">
+                <%= signinMessage %>
+            </div>
+        <% } %>
+        <!--  body  -->
+        <%- body %>
+
+    </div>
+</body>  
+</html>
