@@ -138,7 +138,7 @@ function saveHouse(req, res) {
 }
 
 function getHouses(req, res) {
-  House.find({ price:{$gte: 5500000} }).exec((err,houses) => {
+  House.find({ price:{$gte: 7500000} }).exec((err,houses) => {
     if(err){
       res.status(500).send({
         message: 'Error en el servidor'

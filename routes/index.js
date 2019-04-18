@@ -12,7 +12,7 @@ router.get('/signup', function(req, res, next) {
 });
 
 router.post('/signup', passport.authenticate('local-signup' ,{
-  successRedirect: '/profile',
+  successRedirect: '/map',
   failureRedirect: '/signup',
   passReqToCallback: true
 }));
@@ -22,7 +22,7 @@ router.get('/signin', function(req, res, next) {
 });
 
 router.post('/signin', passport.authenticate('local-signin' ,{
-  successRedirect: '/profile',
+  successRedirect: '/map',
   failureRedirect: '/signin',
   passReqToCallback: true
 }));
@@ -34,6 +34,10 @@ router.get('/logout', function(req, res, next) {
 
 router.get('/profile', isAuthenticated, function(req, res, next) {
     res.render('profile');
+});
+
+router.get('/map', isAuthenticated, function(req, res, next) {
+  res.render('map');
 });
 
 function isAuthenticated(req, res, next) {
