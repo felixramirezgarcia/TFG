@@ -10,11 +10,22 @@
 </div>
 <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Filtros</span>
 
+<% for(var i=0; i < array.length; i++) {%>
+          <span><%= array[i].latitude %></span>
+          <span><%= array[i].longitude %></span>
+<% } %>
+
+    
 <div id="map"></div>
 <script>
     var map;
     function initMap() {
-        var cadiz = {lat: 36.5267181, lng: -6.28910024};
+        <% for(var i=0; i < array.length; i++) {%>
+            var latitud = <%= array[i].latitude %>;
+            var longitud = <%= array[i].longitude %>;
+            var place = {lat: latitud, lng: longitud};
+        <% } %>
+        
 
         map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 37.6000000, lng: -4.5000000},
@@ -23,9 +34,10 @@
 
         var marker = new google.maps.Marker({
           map: map,
-          position: cadiz,
+          position: place,
           title: '250'
         });
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWCBKeYffwpA8RH0d8wUmI9i01Cf0Gr3o&callback=initMap" async defer></script>
+    

@@ -37,7 +37,24 @@ router.get('/profile', isAuthenticated, function(req, res, next) {
 });
 
 router.get('/map', isAuthenticated, function(req, res, next) {
-  res.render('map');
+
+  var House = require('../models/houseschema');
+  House.find({ price:{$gte: 7500000} }).exec((err,houses) => {
+    if(err){
+      res.status(500).send({
+        message: 'Error en el servidor'
+      });
+    }else{
+      if(houses){
+        res.render('map',{array: houses});
+      }else{
+        res.status(404).send({
+          message: 'No hay casas'
+        });
+      }
+    }
+  });
+
 });
 
 function isAuthenticated(req, res, next) {
