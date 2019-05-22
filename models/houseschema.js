@@ -39,7 +39,9 @@ var HouseSchema = new Schema({
     updatedInDaysFormatted: String,
     get_day: Number,
     get_month: Number,
-    get_year: Number
+    get_year: Number,
+    city: String,
+    nPage: Number
 });
 
 module.exports = mongoose.model('House',HouseSchema);
