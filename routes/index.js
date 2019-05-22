@@ -46,7 +46,7 @@ router.get('/profile', isAuthenticated, function(req, res, next) {
 router.get('/map', isAuthenticated, function(req, res, next) {
   var House = require('../models/houseschema');
 
-  House.find({price:{$gte: 7500000}}).exec((err,houses) => {
+  House.find({price:{$gte: 10000000}}).exec((err,houses) => {
     if(err){
       res.status(500).send({
         message: 'Error en el servidor'
