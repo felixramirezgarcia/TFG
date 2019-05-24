@@ -103,6 +103,13 @@ router.post('/map', function(req, res, next) {
             });
           }else{
             if(houses){
+              if(houses[0].latitude && houses[0].longitude){
+                var position = {lat: houses[0].latitude, lng: houses[0].longitude};
+                res.render('map',{array: houses, location:citys, middle:position,zum:14});
+              }else{
+                var position = {lat: 37.6000000, lng: -4.5000000};
+                res.render('map',{array: houses, location:citys, middle:position,zum:14});
+              }
               var position = {lat: houses[0].latitude, lng: houses[0].longitude};
               res.render('map',{array: houses, location:citys, middle:position,zum:14});
             }else{
