@@ -122,6 +122,7 @@ router.post('/map', function(req, res, next) {
 
 });
 
+
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()){
     return next();
@@ -264,6 +265,8 @@ function getQuery(cityname,bathnum,bednum,pricemin,pricemax,type) {
     query = {price:{$lte: pricemax}};
   }else if(type){ //6.-tipo
     query = {propertyType: type};
+  }else{
+    query = {propertyType: "propiedad"};
   }
 
   return query;
