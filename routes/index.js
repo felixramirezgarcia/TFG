@@ -45,15 +45,30 @@ router.get('/profile', isAuthenticated, function(req, res, next) {
 /* GET map. */
 router.get('/map', isAuthenticated, function(req, res, next) {
   var House = require('../models/houseschema');
+  var position = {lat: 37.6000000, lng: -4.5000000};
 
-  House.find({price:{$gte: 10000000}}).exec((err,houses) => {
+  House.distinct("city").exec((err,citys) => {
     if(err){
       res.status(500).send({
         message: 'Error en el servidor'
       });
     }else{
-      if(houses){
-        res.render('map',{array: houses});
+      if(citys){
+        House.find({city:"Unknown"}).exec((err,houses) => {
+          if(err){
+            res.status(500).send({
+              message: 'Error en el servidor'
+            });
+          }else{
+            if(houses){
+              res.render('map',{array:houses, location:citys, middle:position, zum:8});
+            }else{
+              res.status(404).send({
+                message: 'No hay casas'
+              });
+            }
+          }
+        });
       }else{
         res.status(404).send({
           message: 'No hay casas'
@@ -61,11 +76,10 @@ router.get('/map', isAuthenticated, function(req, res, next) {
       }
     }
   });
-
 });
 
 /* POST map. */
-router.post('/map', function(req, res, next) {
+router.post('/map', isAuthenticated, function(req, res, next) {
   var cityname = req.body.city;
   var bathnum = req.body.bath;
   var bednum = req.body.bed;
@@ -75,14 +89,29 @@ router.post('/map', function(req, res, next) {
   var query = getQuery(cityname,bathnum,bednum,pricemin,pricemax,type);
   var House = require('../models/houseschema');
 
-  House.find(query).exec((err,houses) => {
+  House.distinct("city").exec((err,citys) => {
     if(err){
       res.status(500).send({
         message: 'Error en el servidor'
       });
     }else{
-      if(houses){
-        res.render('map',{array: houses});
+      if(citys){
+        House.find(query).exec((err,houses) => {
+          if(err){
+            res.status(500).send({
+              message: 'Error en el servidor'
+            });
+          }else{
+            if(houses){
+              var position = {lat: houses[0].latitude, lng: houses[0].longitude};
+              res.render('map',{array: houses, location:citys, middle:position,zum:14});
+            }else{
+              res.status(404).send({
+                message: 'No hay casas'
+              });
+            }
+          }
+        });
       }else{
         res.status(404).send({
           message: 'No hay casas'
@@ -90,6 +119,7 @@ router.post('/map', function(req, res, next) {
       }
     }
   });
+
 });
 
 function isAuthenticated(req, res, next) {
@@ -235,16 +265,6 @@ function getQuery(cityname,bathnum,bednum,pricemin,pricemax,type) {
   }else if(type){ //6.-tipo
     query = {propertyType: type};
   }
-
-  if(cityname) {console.log("ciudad");console.log(cityname);}
-  if(bathnum) {console.log("baños");console.log(bathnum);}
-  if(bednum) {console.log("camas");console.log(bednum);}
-  if(pricemin) {console.log("pricemin");console.log(pricemin);}
-  if(pricemax) {console.log("pricemax");console.log(pricemax);}
-  if(type) {console.log("type");console.log(type);}
-
-  console.log("La consulta es:");
-  console.log(query);
 
   return query;
 };

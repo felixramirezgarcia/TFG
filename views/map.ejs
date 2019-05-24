@@ -6,19 +6,24 @@
     <div>
         <form method="POST" action="/map">
             <div class="form-group">
-                <input type="text" class="form-control" name="city" placeholder="Ciudad" />
+                <input type="text" class="form-control" name="city" placeholder="Ciudad" list="datalist" onkeyup="ac(this.value)"> 
+                <datalist id="datalist"> 
+                    <% for(var i=0; i < location.length; i++) {%>
+                        <option value=<%= location[i] %>></option>
+                    <% } %>
+                </datalist> 
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" name="bath" placeholder="Nº Baños">
+                <input type="number" min="0" max="20" class="form-control" name="bath" placeholder="Nº Baños">
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" name="bed" placeholder="Nº Habitaciones">
+                <input type="number" min="0" max="20" class="form-control" name="bed" placeholder="Nº Habitaciones">
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" name="price_min" placeholder="Precio minimo">
+                <input type="number" min="0" class="form-control" name="price_min" placeholder="Precio minimo">
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" name="price_max" placeholder="Precio maximo">
+                <input type="number" min="0" class="form-control" name="price_max" placeholder="Precio maximo">
             </div>
             <div class="form-group">
                 <select name="type" class="form-control">
@@ -34,10 +39,6 @@
         </form>
     </div>
 </div>
-<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Filtros</span>
-
-
-
 
 <!------------------  map  ------------------------->    
 <div id="map"></div>
@@ -60,8 +61,8 @@
         <% } %>
         
         map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: 37.6000000, lng: -4.5000000},
-            zoom: 8
+            center: {lat: <%= middle.lat %>, lng: <%= middle.lng %>},
+            zoom: <%= zum %>
         });
 
         var infowindow = new google.maps.InfoWindow();
@@ -86,3 +87,28 @@
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWCBKeYffwpA8RH0d8wUmI9i01Cf0Gr3o&callback=initMap" async defer></script>
     
+<!------------------  autocomplete  ------------------------->  
+
+<script type="text/javascript"> 
+    var tags = [];
+    <% for(var i=0; i < location.length; i++) {%>
+        tags.push("<%= location[i] %>");
+    <% } %>
+
+    var n= tags.length;     
+
+    function ac(value) { 
+        document.getElementById('datalist').innerHTML = ''; 
+        l=value.length; 
+
+        for (var i = 0; i<n; i++) { 
+            if(((tags[i].toLowerCase()).indexOf(value.toLowerCase()))>-1) { 
+                var node = document.createElement("option"); 
+                var val = document.createTextNode(tags[i]); 
+                node.appendChild(val); 
+
+                document.getElementById("datalist").appendChild(node); 
+            } 
+        } 
+    } 
+</script> 
