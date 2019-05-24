@@ -112,7 +112,7 @@ router.post('/map', function(req, res, next) {
               }
             }else{
               res.status(404).send({
-                message: 'No hay casas'
+                message: 'No hay casas' 
               });
             }
           }
@@ -126,7 +126,6 @@ router.post('/map', function(req, res, next) {
   });
 
 });
-
 
 function isAuthenticated(req, res, next) {
   if(req.isAuthenticated()){
