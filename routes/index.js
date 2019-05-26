@@ -48,7 +48,7 @@ router.get('/map', function(req, res, next) {
 });
 
 /* POST map. */
-router.post('/map', function(req, res, next) {
+router.post('/map',isAuthenticated, function(req, res, next) {
   var cityname = req.body.city;
   var bathnum = req.body.bath;
   var bednum = req.body.bed;
@@ -56,13 +56,10 @@ router.post('/map', function(req, res, next) {
   var pricemax = req.body.price_max;
   var type = req.body.type;
   var zoom = 8;
-  if(cityname){
-    zoom = 14;
-  }
+  if(cityname) zoom = 14;
   var query = getQuery(cityname,bathnum,bednum,pricemin,pricemax,type);
   
   getMap2(res,query,zoom);
-
 });
 
 function isAuthenticated(req, res, next) {
