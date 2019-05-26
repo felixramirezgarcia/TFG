@@ -34,12 +34,16 @@
                 </select>
             </div>
             <div class="form-group"></div>
-                <input type="submit" class="btn btn-info form-control" value="Buscar">
+                <input type="submit" class="btn btn-info form-control" value="Buscar" >
             </div>
         </form>
     </div>
 </div>
-
+<%if (error && error.code >= 1) { %>
+<script>
+    alert("<%= error.msg %>");
+</script>
+<% } %>
 <!------------------  map  ------------------------->    
 <div id="map"></div>
 <script>

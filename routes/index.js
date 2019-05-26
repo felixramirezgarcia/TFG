@@ -61,7 +61,7 @@ router.get('/map', function(req, res, next) {
             });
           }else{
             if(houses){
-              res.render('map',{array:houses, location:citys, middle:position, zum:8});
+              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0});
             }else{
               res.status(404).send({
                 message: 'No hay casas'
@@ -102,18 +102,17 @@ router.post('/map', function(req, res, next) {
               message: 'Error en el servidor'
             });
           }else{
-            if(houses){
+            if(houses && Array.isArray(houses) && houses.length >=1){
               if(houses[0].latitude && houses[0].longitude){
                 var position = {lat: houses[0].latitude, lng: houses[0].longitude};
-                res.render('map',{array: houses, location:citys, middle:position,zum:14});
+                res.render('map',{array: houses, location:citys, middle:position,zum:14, error:0});
               }else{
                 var position = {lat: 37.6000000, lng: -4.5000000};
-                res.render('map',{array: houses, location:citys, middle:position,zum:14});
+                res.render('map',{array: houses, location:citys, middle:position,zum:8, error:0});
               }
             }else{
-              res.status(404).send({
-                message: 'No hay casas' 
-              });
+              var position = {lat: 37.6000000, lng: -4.5000000};
+              res.render('map',{array: houses, location:citys, middle:position,zum:14, error:{code:1, msg:"No houses were found"}});
             }
           }
         });
