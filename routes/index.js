@@ -43,7 +43,7 @@ router.get('/profile', isAuthenticated, function(req, res, next) {
 });
 
 /* GET map. */
-router.get('/map', isAuthenticated, function(req, res, next) {
+router.get('/map', function(req, res, next) {
   var House = require('../models/houseschema');
   var position = {lat: 37.6000000, lng: -4.5000000};
 
@@ -270,7 +270,7 @@ function getQuery(cityname,bathnum,bednum,pricemin,pricemax,type) {
   }else if(type){ //6.-tipo
     query = {propertyType: type};
   }else{
-    query = {propertyType: "propiedad"};
+    query = {city: "Granada"};
   }
 
   return query;
