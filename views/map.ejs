@@ -85,8 +85,8 @@
     } 
 
     lista.sort(function (a, b) {
-        if (a.price > b.price) return 1;
-        if (a.price < b.price) return -1;
+        if (parseInt(a.price, 10) > parseInt(b.price, 10)) return 1;
+        if (parseInt(a.price, 10) < parseInt(b.price, 10)) return -1;
         return 0;
     });
 
@@ -98,8 +98,6 @@
         summarys[i]= lista[i].summary;
         places[i]= lista[i].place;
     } 
-
-    document.write(prices);
 
     var map;
     function initMap() {
@@ -135,14 +133,14 @@
                 var marker = new google.maps.Marker({
                     map: map,
                     position: places[j],
-                    icon: rojo,
+                    icon: verde,
                     shadow: pinShadow
                 });
             }else if(j < tam*2){
                 var marker = new google.maps.Marker({
                     map: map,
                     position: places[j],
-                    icon: naranja,
+                    icon: azul,
                     shadow: pinShadow
                 });
             }else if(j < tam*3){
@@ -156,14 +154,14 @@
                 var marker = new google.maps.Marker({
                     map: map,
                     position: places[j],
-                    icon: azul,
+                    icon: naranja,
                     shadow: pinShadow
                 });
             }else if(j < tam*5){
                 var marker = new google.maps.Marker({
                     map: map,
                     position: places[j],
-                    icon: verde,
+                    icon: rojo,
                     shadow: pinShadow
                 });
             }else{
