@@ -222,14 +222,15 @@ function getMap1(res) {
       });
     }else{
       if(citys){
-        House.find({city:"Unknown"}).exec((err,houses) => {
+        var query = {somethin:" "};
+        House.find(query).exec((err,houses) => {
           if(err){
             res.status(500).send({
               message: 'Error en el servidor'
             });
           }else{
             if(houses){
-              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0});
+              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0, qry : query});
             }else{
               res.status(404).send({
                 message: 'No hay casas'
@@ -266,14 +267,14 @@ function getMap2(res,query,zoom) {
             if(houses && Array.isArray(houses) && houses.length >=1){
               if(houses[0].latitude && houses[0].longitude){
                 var position = {lat: houses[0].latitude, lng: houses[0].longitude};
-                res.render('map',{array: houses, location:citys, middle:position,zum:zoom, error:0});
+                res.render('map',{array: houses, location:citys, middle:position, zum:zoom, error:0, qry : query});
               }else{
                 var position = {lat: 37.6000000, lng: -4.5000000};
-                res.render('map',{array: houses, location:citys, middle:position,zum:zoom, error:0});
+                res.render('map',{array: houses, location:citys, middle:position, zum:zoom, error:0, qry : query});
               }
             }else{
               var position = {lat: 37.6000000, lng: -4.5000000};
-              res.render('map',{array: houses, location:citys, middle:position,zum:8, error:{code:1, msg:"Ciudad no valida"}});
+              res.render('map',{array: houses, location:citys, middle:position, zum:8, error:{code:1, msg:"Ciudad no valida"}, qry : query});
             }
           }
         });

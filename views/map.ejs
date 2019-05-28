@@ -6,7 +6,7 @@
     <div>
         <form method="POST" action="/map">
             <div class="form-group">
-                <input type="text" class="form-control" name="city" placeholder="Ciudad" list="datalist" onkeyup="ac(this.value)"> 
+                <input type="text" class="form-control" name="city" value="<%if (qry && qry.city) { %><%= qry.city %><% } %>" placeholder="Ciudad" list="datalist" onkeyup="ac(this.value)"> 
                 <datalist id="datalist"> 
                     <% for(var i=0; i < location.length; i++) {%>
                         <option value=<%= location[i] %>></option>
@@ -14,10 +14,10 @@
                 </datalist> 
             </div>
             <div class="form-group">
-                <input type="number" min="0" max="20" class="form-control" name="bath" placeholder="Nº Baños">
+                <input type="number" min="0" max="20" class="form-control" name="bath" value="<%if (qry && qry.bathroomNumber) { %><%= qry.bathroomNumber %><% } %>" placeholder="Nº Baños">
             </div>
             <div class="form-group">
-                <input type="number" min="0" max="20" class="form-control" name="bed" placeholder="Nº Habitaciones">
+                <input type="number" min="0" max="20" class="form-control" name="bed" value="<%if (qry && qry.bedroomNumber) { %><%= qry.bedroomNumber %><% } %>" placeholder="Nº Habitaciones">
             </div>
             <div class="form-group">
                 <input type="number" min="0" class="form-control" name="price_min" placeholder="Precio minimo">
@@ -27,10 +27,24 @@
             </div>
             <div class="form-group">
                 <select name="type" class="form-control">
-                    <option selected="true" disabled="disabled">Tipo de vivienda</option>
-                    <option value="house">Casa</option>
-                    <option value="flat">Piso</option>
-                    <option value="property">Propiedad</option>
+                    <%if (qry && qry.propertyType === "house") { %>
+                        <option value="<%= qry.propertyType %>" selected="true">Casa</option>
+                        <option value="flat">Piso</option>
+                        <option value="property">Propiedad</option>
+                    <% }else if(qry && qry.propertyType === "flat"){ %>
+                        <option value="house">Casa</option>
+                        <option value="<%= qry.propertyType %>" selected="true">Piso</option>
+                        <option value="property">Propiedad</option>
+                    <% }else if(qry && qry.propertyType === "property"){ %>
+                        <option value="house">Casa</option>
+                        <option value="flat">Piso</option>
+                        <option value="<%= qry.propertyType %>" selected="true">Propiedad</option>
+                    <% }else{ %>
+                        <option selected="true" disabled="disabled">Tipo de vivienda</option>
+                        <option value="house">Casa</option>
+                        <option value="flat">Piso</option>
+                        <option value="property">Propiedad</option>
+                    <% } %>
                 </select>
             </div>
             <div class="form-group"></div>
@@ -39,6 +53,9 @@
         </form>
     </div>
 </div>
+
+
+
 
 <!------------------  error  -------------------------> 
 <%if (error && error.code >= 1) { %>
@@ -176,12 +193,18 @@
 
             google.maps.event.addListener(marker, 'click', (function (marker, j) {
                 return function () {
+                    var aux;
+
+                    if(types[j] === 'house')    aux = "Casa"
+                    else if(types[j] === 'flat')    aux = "Piso"
+                    else if(types[j] === 'property')   aux = "Propiedad"
+                    
                     var a = '<div align="center">'+
-                                '<p>Tipo de vivienda: '+ types[j] + '</p>' +
-                                '<p>Nº de Habitaciones: '+ beds[j] + '</p>' +
-                                '<p>Nº de Baños: '+ baths[j] + '</p>' +
-                                '<p>Precio: '+ prices[j] + '€</p>' +
-                                '<p>Descripcion: '+ summarys[j] + '</p>' +
+                                '<p>Tipo de vivienda: '+ aux + '</p>' +
+                                '<p>'+ beds[j] + ' Habitaciones</p>' +
+                                '<p>'+ baths[j] + ' Baños</p>' +
+                                '<p>'+ prices[j] + '€</p>' +
+                                '<p>'+ summarys[j] + '</p>' +
                                 '<a href="'+ urls[j] + '" target="_blank">Ver más información</a>' +
                             '</div>';
                     infowindow.setContent(a);
@@ -194,6 +217,32 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWCBKeYffwpA8RH0d8wUmI9i01Cf0Gr3o&callback=initMap" async defer></script>
     
 <!------------------  autocomplete  ------------------------->  
+
+<script type="text/javascript"> 
+    var tags = [];
+    <% for(var i=0; i < location.length; i++) {%>
+        tags.push("<%= location[i] %>");
+    <% } %>
+
+    var n= tags.length;     
+
+    function ac(value) { 
+        document.getElementById('datalist').innerHTML = ''; 
+        l=value.length; 
+
+        for (var i = 0; i<n; i++) { 
+            if(((tags[i].toLowerCase()).indexOf(value.toLowerCase()))>-1) { 
+                var node = document.createElement("option"); 
+                var val = document.createTextNode(tags[i]); 
+                node.appendChild(val); 
+
+                document.getElementById("datalist").appendChild(node); 
+            } 
+        } 
+    } 
+</script> 
+
+<!------------------  recarga  ------------------------->  
 
 <script type="text/javascript"> 
     var tags = [];
