@@ -49,6 +49,7 @@ router.get('/map', function(req, res, next) {
 
 /* POST map. */
 router.post('/map', function(req, res, next) {
+  var recharge = req.body.recharge;
   var cityname = req.body.city;
   var bathnum = req.body.bath;
   var bednum = req.body.bed;
@@ -57,8 +58,8 @@ router.post('/map', function(req, res, next) {
   var type = req.body.type;
   var zoom = 8;
   if(cityname) zoom = 14;
+  if(type === "allTypes") type = null;
   var query = getQuery(cityname,bathnum,bednum,pricemin,pricemax,type);
-  
   getMap2(res,query,zoom);
 });
 

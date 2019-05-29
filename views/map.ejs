@@ -3,6 +3,7 @@
 <!------------------  sidenav  ------------------------->
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <!------------------  query form  ------------------------->
     <div>
         <form method="POST" action="/map">
             <div class="form-group">
@@ -31,14 +32,17 @@
                         <option value="<%= qry.propertyType %>" selected="true">Casa</option>
                         <option value="flat">Piso</option>
                         <option value="property">Propiedad</option>
+                        <option value="allTypes">Todas</option>
                     <% }else if(qry && qry.propertyType === "flat"){ %>
                         <option value="house">Casa</option>
                         <option value="<%= qry.propertyType %>" selected="true">Piso</option>
                         <option value="property">Propiedad</option>
+                        <option value="allTypes">Todas</option>
                     <% }else if(qry && qry.propertyType === "property"){ %>
                         <option value="house">Casa</option>
                         <option value="flat">Piso</option>
                         <option value="<%= qry.propertyType %>" selected="true">Propiedad</option>
+                        <option value="allTypes">Todas</option>
                     <% }else{ %>
                         <option selected="true" disabled="disabled">Tipo de vivienda</option>
                         <option value="house">Casa</option>
@@ -51,11 +55,21 @@
                 <input type="submit" class="btn btn-info form-control" value="Buscar" >
             </div>
         </form>
+        <!------------------  recharge form  ------------------------->
+        <div>
+            <form method="POST" action="/map">      
+                <div class="form-group">
+                    <input type="hidden" name="recharge" value="1">
+                    <input type="hidden" name="city" value="<%if (qry && qry.city) { %><%= qry.city %><% } %>">
+                    <input type="hidden" name="bath" value="<%if (qry && qry.bathroomNumber) { %><%= qry.bathroomNumber %><% } %>">
+                    <input type="hidden" name="bed" value="<%if (qry && qry.bedroomNumber) { %><%= qry.bedroomNumber %><% } %>">
+                    <input type="hidden" name="type" value="<%if (qry && qry.propertyType) { %><%= qry.propertyType %><% } %>">
+                    <input style="margin-top:2px" type="submit" class="btn btn-warning form-control" value="Recarga" >
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
-
-
 
 <!------------------  error  -------------------------> 
 <%if (error && error.code >= 1) { %>
@@ -117,6 +131,7 @@
     } 
 
     var map;
+
     function initMap() {
         
         map = new google.maps.Map(document.getElementById('map'), {
@@ -213,6 +228,7 @@
             })(marker, j)); 
         } 
     }
+    
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWCBKeYffwpA8RH0d8wUmI9i01Cf0Gr3o&callback=initMap" async defer></script>
     
@@ -267,3 +283,4 @@
         } 
     } 
 </script> 
+
