@@ -43,12 +43,12 @@ router.get('/profile', isAuthenticated, function(req, res, next) {
 });
 
 /* GET map. */
-router.get('/map', function(req, res, next) {
+router.get('/map', isAuthenticated, function(req, res, next) {
   getMap1(res);
 });
 
 /* POST map. */
-router.post('/map', function(req, res, next) {
+router.post('/map', isAuthenticated, function(req, res, next) {
   var recharge = req.body.recharge;
   var cityname = req.body.city;
   var bathnum = req.body.bath;
