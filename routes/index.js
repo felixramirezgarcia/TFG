@@ -49,7 +49,6 @@ router.get('/map', isAuthenticated, function(req, res, next) {
 
 /* POST map. */
 router.post('/map', isAuthenticated, function(req, res, next) {
-  var recharge = req.body.recharge;
   var cityname = req.body.city;
   var bathnum = req.body.bath;
   var bednum = req.body.bed;

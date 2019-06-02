@@ -179,8 +179,30 @@ function getHouse(req, res) {
   });
 }
 
+
+function getPriceInterval(req, res) {
+  House.find({}).sort({price:1}).limit(1).exec((err,houses) => {
+    if(err){
+      res.status(500).send({
+        message: 'Error en el servidor'
+      });
+    }else{
+      if(houses){
+        res.status(200).send({
+          houses
+        });
+      }else{
+        res.status(404).send({
+          message: 'No hay casas'
+        });
+      }
+    }
+  });
+}
+
 module.exports = {
     saveHouse,
     getHouses,
-    getHouse
+    getHouse,
+    getPriceInterval
 };

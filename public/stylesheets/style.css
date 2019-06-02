@@ -47,6 +47,11 @@ a {
   .sidenav a {font-size: 18px;}
 }
 
+.boton-he {
+  margin-bottom: 15px;
+}
+
+
 /*----------- MAPA ---------------*/
 
 #map {
