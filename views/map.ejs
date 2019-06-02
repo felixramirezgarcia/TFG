@@ -71,13 +71,6 @@
     </div>
 </div>
 
-<!------------------  error  -------------------------> 
-<%if (error && error.code >= 1) { %>
-<script>
-    alert("<%= error.msg %>");
-</script>
-<% } %>
-
 <!------------------  map  ------------------------->
 <div id="floating-panel">
       <button onclick="toggleHeatmap()">Toggle Heatmap</button>
@@ -87,163 +80,20 @@
 </div>
 <div id="map"></div>
 
+
+<script src="/lib/dataclass.js"></script>
+<script src="/lib/mapclass.js"></script>
 <script>
 
-    getError();
-
-    function getError(){
-        <%if (error && error.code >= 1) { %>
-            alert("<%= error.msg %>");
-        <% } %>
-    }
-
-    var urls = [];
-    var beds = [];
-    var baths = [];
-    var prices = [];
-    var summarys = [];
-    var types = [];
-    var places = [];
-
-    <% for(var i=0; i < array.length; i++) {%>
-        var p = "<%= array[i].price %>";
-        prices.push(p);
-        urls.push("<%= array[i].listerUrl %>");
-        beds.push("<%= array[i].bedroomNumber %>");
-        baths.push("<%= array[i].bathroomNumber %>");
-        summarys.push("<%= array[i].summary %>");
-        types.push("<%= array[i].propertyType %>");
-        var latitud = <%= array[i].latitude %>;
-        var longitud = <%= array[i].longitude %>;
-        var place = {lat: latitud, lng: longitud};
-        places.push(place);
-    <% } %>
-
-    var lista = [];
-    for(var i=0; i < prices.length; i++) {
-        lista.push({
-            'url' : urls[i],
-            'price' : prices[i],
-            'bed' : beds[i],
-            'bath' : baths[i],
-            'summary' : summarys[i],
-            'place' : places[i],
-        });
-    } 
-
-    lista.sort(function (a, b) {
-        if (parseInt(a.price, 10) > parseInt(b.price, 10)) return 1;
-        if (parseInt(a.price, 10) < parseInt(b.price, 10)) return -1;
-        return 0;
-    });
-
-    for(var i=0; i < lista.length; i++) {
-        prices[i]= lista[i].price;
-        urls[i]= lista[i].url;
-        beds[i]= lista[i].bed;
-        baths[i]= lista[i].bath;
-        summarys[i]= lista[i].summary;
-        places[i]= lista[i].place;
-    } 
-
-    var map, heatmap;
-    var centro;
-
-    function initMap() {
-        
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: <%= middle.lat %>, lng: <%= middle.lng %>},
-            zoom: <%= zum %>
-        });
+    function initMap()  {
+            
+        let err = <%= error %>;
+        let arr = <%- JSON.stringify(array) %>;
         
 
-        var infowindow = new google.maps.InfoWindow();
-        var colorRojo = "FE7569";
-        var colorNaranja = "EEAC69";
-        var colorAmarillo = "ECF361";
-        var colorAzul = "61BAF3";
-        var colorVerde = "5AB440";
-        var rojo =      new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + colorRojo,
-                        new google.maps.Size(21, 34),new google.maps.Point(0,0),new google.maps.Point(10, 34));
-        var naranja =   new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + colorNaranja,
-                        new google.maps.Size(21, 34),new google.maps.Point(0,0),new google.maps.Point(10, 34));
-        var amarillo =  new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + colorAmarillo,
-                        new google.maps.Size(21, 34),new google.maps.Point(0,0),new google.maps.Point(10, 34));
-        var azul =      new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + colorAzul,
-                        new google.maps.Size(21, 34),new google.maps.Point(0,0),new google.maps.Point(10, 34));
-        var verde =     new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + colorVerde,
-                        new google.maps.Size(21, 34),new google.maps.Point(0,0),new google.maps.Point(10, 34));
-        var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-                        new google.maps.Size(40, 37),new google.maps.Point(0, 0),new google.maps.Point(12, 35));
-
-        for(var j=0; j< places.length; j++){
-            var tam = places.length/5;
-
-            if(j < tam){
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: places[j],
-                    icon: verde,
-                    shadow: pinShadow
-                });
-            }else if(j < tam*2){
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: places[j],
-                    icon: azul,
-                    shadow: pinShadow
-                });
-            }else if(j < tam*3){
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: places[j],
-                    icon: amarillo,
-                    shadow: pinShadow
-                });
-            }else if(j < tam*4){
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: places[j],
-                    icon: naranja,
-                    shadow: pinShadow
-                });
-            }else if(j < tam*5){
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: places[j],
-                    icon: rojo,
-                    shadow: pinShadow
-                });
-            }else{
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: places[j],
-                    icon: amarillo,
-                    shadow: pinShadow
-                });
-            }
-
-            google.maps.event.addListener(marker, 'click', (function (marker, j) {
-                return function () {
-                    var aux;
-
-                    if(types[j] === 'house')    aux = "Casa"
-                    else if(types[j] === 'flat')    aux = "Piso"
-                    else if(types[j] === 'property')   aux = "Propiedad"
-                    
-                    var a = '<div align="center">'+
-                                '<p>Tipo de vivienda: '+ aux + '</p>' +
-                                '<p>'+ beds[j] + ' Habitaciones</p>' +
-                                '<p>'+ baths[j] + ' Baños</p>' +
-                                '<p>'+ prices[j] + '€</p>' +
-                                '<p>'+ summarys[j] + '</p>' +
-                                '<a href="'+ urls[j] + '" target="_blank">Ver más información</a>' +
-                            '</div>';
-                    infowindow.setContent(a);
-                    infowindow.open(map, marker);
-                }
-            })(marker, j)); 
-        } 
+        let mid = <%- JSON.stringify(middle) %>;
+        let zu = <%= zum %>;
+        const map = new Mapa(mid,zu,"map",err,arr);
 
     }
     
