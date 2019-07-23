@@ -12,9 +12,13 @@
     <!------------------  nav  ------------------------->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <%if (user) {  %> 
-            <h4 style="cursor:pointer" onclick="openNav()">InfoJaus</h4>
+            <div class="header">
+                <h4 style="cursor:pointer" onclick="openNav()"><img src="https://i.ibb.co/SXtBcNz/logo.png" alt="logo" border="0"></h4>
+            </div>
         <% } else { %> 
-            <a class="navbar-brand" href="/">InfoJaus</a>
+            <div class="header">
+                <a href="/"><img src="https://i.ibb.co/SXtBcNz/logo.png" alt="logo" border="0"></a>
+            </div>
         <% } %>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
