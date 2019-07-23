@@ -2,6 +2,7 @@ class Mapa {
 
     constructor(mid, zu, idElement, err, arr) {
         const classob = new Datos(err, arr);
+        
         this.map = new google.maps.Map(document.getElementById(idElement), {
             center: { lat: mid.lat, lng: mid.lng },
             zoom: zu
@@ -98,10 +99,10 @@ class Mapa {
                 map: this.map,
                 position: {lat: this.places[j].latitude,lng: this.places[j].longitude},
                 icon: (this.places[j].price > 0 && this.places[j].price <= 100000) ? this.verde :
-                    (this.places[j].price > 100000 && this.places[j].price <= 250000) ? this.azul : 
-                    (this.places[j].price > 250000 && this.places[j].price <= 350000) ? this.amarillo : 
-                    (this.places[j].price > 350000 && this.places[j].price <= 500000) ? this.naranja :
-                    (this.places[j].price > 500000 && this.places[j].price <= 10000000) ? this.rojo : this.rojo,
+                      (this.places[j].price > 100000 && this.places[j].price <= 250000) ? this.azul : 
+                      (this.places[j].price > 250000 && this.places[j].price <= 350000) ? this.amarillo : 
+                      (this.places[j].price > 350000 && this.places[j].price <= 500000) ? this.naranja :
+                      (this.places[j].price > 500000 && this.places[j].price <= 10000000) ? this.rojo : this.rojo,
                 shadow: this.pinShadow
             }));
 

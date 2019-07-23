@@ -6,7 +6,7 @@ class Datos{
     }
 
     getError(error){
-        if (error && error.code >= 1) {
+        if (error && error.code >= 1) { 
             alert(error.msg);
         }
     }

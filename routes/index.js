@@ -42,6 +42,11 @@ router.get('/profile', isAuthenticated, function(req, res, next) {
     res.render('profile');
 });
 
+/* GET cookies. */
+router.get('/cookies', function(req, res, next) {
+  res.render('cookies');
+});
+
 /* GET map. */
 router.get('/map', isAuthenticated, function(req, res, next) {
   getMap1(res);
