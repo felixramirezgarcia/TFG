@@ -1,19 +1,52 @@
 <%- layout('layout.ejs') %>
 
+<%if (qry && qry.alert) { %>
+    <div class="alert warning centrad">
+        <span class="closebtn">&times;</span>  
+        <strong><%= qry.alert %></strong>
+    </div>
+<% } %>
+
 <!------------------  sidenav  ------------------------->
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <!------------------  query form  ------------------------->
     <div>
-        <form method="POST" action="/map">
-            <div class="form-group">
-                <input type="text" class="form-control" name="city" value="<%if (qry && qry.city) { %><%= qry.city %><% } %>" placeholder="Ciudad" list="datalist" onkeyup="ac(this.value)"> 
-                <datalist id="datalist"> 
-                    <% for(var i=0; i < location.length; i++) {%>
-                        <option value=<%= location[i] %>></option>
-                    <% } %>
-                </datalist> 
+        <form method="POST" autocomplete="off" action="/map">
+            
+            <div class="form-group autocomplete" style="width:400px;">
+                <input id="inputCity" class="form-control" type="text" value="<%if (qry && qry.city) { %><%= qry.city %><% } %>" name="city" placeholder="Ciudad">
             </div>
+
+            <%if (qry && (qry.city || qry.bathroomNumber || qry.bedroomNumber || qry.price || qry.propertyType)) { %>
+                <div class="form-group">
+                    <select name="font" id="fuente_datos" class="form-control">
+                        <option selected="true" disabled="disabled">Fuente de datos</option>
+                    </select>
+                </div>
+            <% }else{ %>
+                <div class="form-group">
+                    <select name="font" class="form-control">
+                        <option selected="true" disabled="disabled">Fuente de datos</option>
+                        <option value="Yaencontre">Yaencontre</option>
+                        <option value="pisos.com">Pisos.com</option>
+                        <option value="Fotocasa">Fotocasa</option>
+                        <option value="Easyavvisi">Easyavvisi</option>
+                        <option value="Habitaclia">Habitaclia</option>
+                        <option value="solvia">Solvia</option>
+                        <option value="thinkSPAIN">ThinkSPAIN</option>
+                        <option value="Globaliza">Globaliza</option>
+                        <option value="Servihabitat">Servihabitat</option>
+                        <option value="Ventadepisos">Ventadepisos</option>
+                        <option value="Tucasa">Tucasa</option>
+                        <option value="SpainHouses">SpainHouses</option>
+                        <option value="Green-Acres">Green-Acres</option>
+                        <option value="Trovimap">Trovimap</option>
+                        <option value="1001portales.com">1001portales.com</option>
+                    </select>
+                </div>
+            <% } %>
+
             <div class="form-group">
                 <input type="number" min="0" max="20" class="form-control" name="bath" value="<%if (qry && qry.bathroomNumber) { %><%= qry.bathroomNumber %><% } %>" placeholder="Nº Baños">
             </div>
@@ -31,23 +64,15 @@
                     <%if (qry && qry.propertyType === "house") { %>
                         <option value="<%= qry.propertyType %>" selected="true">Casa</option>
                         <option value="flat">Piso</option>
-                        <option value="property">Propiedad</option>
                         <option value="allTypes">Todas</option>
                     <% }else if(qry && qry.propertyType === "flat"){ %>
                         <option value="house">Casa</option>
                         <option value="<%= qry.propertyType %>" selected="true">Piso</option>
-                        <option value="property">Propiedad</option>
-                        <option value="allTypes">Todas</option>
-                    <% }else if(qry && qry.propertyType === "property"){ %>
-                        <option value="house">Casa</option>
-                        <option value="flat">Piso</option>
-                        <option value="<%= qry.propertyType %>" selected="true">Propiedad</option>
                         <option value="allTypes">Todas</option>
                     <% }else{ %>
                         <option selected="true" disabled="disabled">Tipo de vivienda</option>
                         <option value="house">Casa</option>
                         <option value="flat">Piso</option>
-                        <option value="property">Propiedad</option>
                     <% } %>
                 </select>
             </div>
@@ -79,8 +104,7 @@
     function toggleHeatmap() {
         map.toggleHeatmap();
     }
-    function initMap()  {
-            
+    function initMap()  {    
         let err = <%= error %>;
         let arr = <%- JSON.stringify(array) %>;
         let mid = <%- JSON.stringify(middle) %>;
@@ -91,32 +115,122 @@
     
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWCBKeYffwpA8RH0d8wUmI9i01Cf0Gr3o&libraries=visualization&callback=initMap" async defer></script>
-    
-<!------------------  autocomplete  ------------------------->  
 
-<script type="text/javascript"> 
-    var tags = [];
-    <% for(var i=0; i < location.length; i++) {%>
-        tags.push("<%= location[i] %>");
-    <% } %>
+<!------------------  autocomplete city name ------------------------->  
 
-    var n= tags.length;     
+<script>
+function autocomplete(inp, arr) {
+  var currentFocus;
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      this.parentNode.appendChild(a);
+      for (i = 0; i < arr.length; i++) {
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          b = document.createElement("DIV");
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          b.addEventListener("click", function(e) {
+              inp.value = this.getElementsByTagName("input")[0].value;
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
 
-    function ac(value) { 
-        document.getElementById('datalist').innerHTML = ''; 
-        l=value.length; 
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        currentFocus++;
+        addActive(x);
+      } else if (e.keyCode == 38) { 
+        currentFocus--;
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        e.preventDefault();
+        if (currentFocus > -1) {
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    if (!x) return false;
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+  });
+}
 
-        for (var i = 0; i<n; i++) { 
-            if(((tags[i].toLowerCase()).indexOf(value.toLowerCase()))>-1) { 
-                var node = document.createElement("option"); 
-                var val = document.createTextNode(tags[i]); 
-                node.appendChild(val); 
+var cities = [];
+<% for(var i=0; i < location.length; i++) {%>
+    cities.push("<%= location[i] %>");
+<% } %>
 
-                document.getElementById("datalist").appendChild(node); 
-            } 
-        } 
-    } 
-</script> 
+autocomplete(document.getElementById("inputCity"), cities);
+</script>
 
+
+<!------------------  font data autocomplete  -------------------------> 
+
+<script type="text/javascript">
+
+    function cargar_fuente_datos(){
+        var setdatafont = new Set();
+
+        <% for(var i=0; i < array.length; i++) {%>
+            setdatafont.add("<%= array[i].datasourceName %>");
+        <% } %>
+
+        var array = Array.from(setdatafont);
+        
+        for(var i in array){ 
+            document.getElementById("fuente_datos").innerHTML += "<option value='"+array[i]+"'>"+array[i]+"</option>"; 
+        }
+    }
+
+cargar_fuente_datos();
+
+</script>
+
+<!------------------  alert data not found  -------------------------> 
+
+<script>
+var close = document.getElementsByClassName("closebtn");
+var i;
+
+for (i = 0; i < close.length; i++) {
+  close[i].onclick = function(){
+    var div = this.parentElement;
+    div.style.opacity = "0";
+    setTimeout(function(){ div.style.display = "none"; }, 600);
+  }
+}
+</script>
 
 
