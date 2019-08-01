@@ -62,9 +62,38 @@ router.post('/map', isAuthenticated, function(req, res, next) {
   var pricemax = req.body.price_max;
   var type = req.body.type;
   var zoom = 8;
-  if(cityname) zoom = 14;
+  var winner;
+
+  if(cityname){
+    zoom = 14;
+    var list_citys = [
+    "Abla","Abrucena","Adra","Alboloduy","Albánchez","Alcudia-de-Monteagud","Alcóntar","Alhabia","Alhama-de-Almería","Alicún","Almería","Alsodux","Arboleas","Armuña-de-Almanzora","Bacares","Bayarque","Bayárcal","Beires","Benahadux","Benitagla","Benizalón","Bentarique","Berja","Bédar","Canjáyar","Cantoria","Carboneras","Chercos","Chirivel","Cuevas-del-Almanzora","Cóbdar","Dalías","Ejido","Enix","Felix","Fines","Fiñana","Fondón","Garrucha","Gádor","Gérgal","Huécija","Huércal-de-Almería","Huércal-Overa","Illar","Instinción","Laroya","Lubrín","Lucainena-de-las-Torres","Láujar-de-Andarax","Líjar",
+    "Lúcar","Macael","María","Mojonera","Mojácar","Nacimiento","Níjar","Ohanes","Olula-de-Castro","Olula-del-Río","Oria","Padules","Partaloa","Paterna-del-Río","Pulpí","Purchena","Roquetas-de-Mar","Rágol","Santa-Fe-de-Mondújar","Serón","Sierro","Sorbas","Suflí","Tabernas","Taberno","Tahal","Terque","Tres-Villas","Turre","Turrillas","Tíjola","Uleila-del-Campo","Urrácal","Velefique","Vera","Viator","Vélez-Blanco","Vélez-Rubio","Vícar","Zurgena","Alcalá-de-los-Gazules","Algeciras","Algodonales","Arcos-de-la-Frontera","Barbate","Benalup-Casas-Viejas","Benaocaz",
+    "Bornos","Castellar-de-la-Frontera","Chiclana-de-la-Frontera","Chipiona","Conil-de-la-Frontera","Cádiz","Espera","Gastor","Grazalema","Jerez-de-la-Frontera","Jimena-de-la-Frontera","Línea-de-la-Concepción","Medina-Sidonia","Olvera","Paterna-de-Rivera","Prado-del-Rey","Puerto-Real","Puerto-Serrano","Puerto-de-Santa-María","Rota","San-Fernando","San-José-del-Valle","San-Roque","Sanlúcar-de-Barrameda","Setenil-de-las-Bodegas","Tarifa","Trebujena","Ubrique","Vejer-de-la-Frontera","Villaluenga-del-Rosario","Villamartín","Zahara","Adamuz","Aguilar-de-la-Frontera","Alcaracejos","Almedinilla","Almodóvar-del-Río","Añora","Baena","Belalcázar","Benamejí","Blázquez","Bujalance","Cabra","Carcabuey","Cardeña","Carlota","Carpio","Castro-del-Río","Cañete-de-las-Torres","Córdoba","Dos-Torres","Espejo","Espiel","Fernán-Núñez","Fuente-Obejuna","Fuente-Palmera","Fuente-Tójar","Granjuela","Guadalcázar","Hinojosa-del-Duque","Hornachuelos","Iznájar","Lucena","Luque","Montalbán-de-Córdoba","Montilla","Montoro","Monturque","Moriles","Nueva-Carteya","Obejo","Palma-del-Río","Pedro-Abad","Peñarroya-Pueblonuevo","Posadas","Pozoblanco","Priego-de-Córdoba","Puente-Genil","Rute","San-Sebastián-de-los-Ballesteros","Santa-Eufemia","Santaella","Torrecampo","Victoria","Villa-del-Río","Villafranca-de-Córdoba","Villaharta","Villanueva-de-Córdoba","Villanueva-del-Duque","Villaralto",
+    "Villaviciosa-de-Córdoba","Zuheros","Albolote","Albondón","Albuñol","Albuñuelas","Albuñán","Alfacar","Algarinejo","Alhama-de-Granada","Alhendín","Almegíjar","Almuñécar","Alpujarra-de-la-Sierra","Alquife","Arenas-del-Rey","Armilla","Atarfe","Baza","Beas-de-Granada","Beas-de-Guadix","Benamaurel","Bubión","Busquístar","Bérchules","Cacín","Calahorra","Calicasas","Campotéjar","Caniles","Capileira","Carataunas","Castilléjar","Castril","Cenes-de-la-Vega","Chauchina","Chimeneas","Churriana-de-la-Vega","Cijuela","Cogollos-de-Guadix","Cogollos-de-la-Vega","Colomera","Cortes-de-Baza","Cortes-y-Graena","Cuevas-del-Campo","Cádiar","Cájar",
+    "Cástaras","Cáñar","Cúllar","Cúllar-Vega","Darro","Deifontes","Diezma","Dílar","Dólar","Dúdar","Dúrcal","Escúzar","Fonelas","Freila","Fuente-Vaqueros","Gabias","Gorafe","Granada","Guadahortuna","Guadix","Guajares","Gualchos","Gójar","Güejar-Sierra","Güevéjar","Huélago","Huéneja","Huéscar","Huétor-Tájar","Huétor-Vega","Huétor-de-Santillán","Illora","Itrabo","Iznalloz","Jayena","Jerez-del-Marquesado","Jete","Jun","Juviles","Lanjarón","Lanteira","Lecrín","Lentegí","Lobras","Loja",
+    "Láchar","Lújar","Malahá","Maracena","Marchal","Moclín","Monachil","Montefrío","Montejícar","Montillana","Moraleda-de-Zafayona","Morelábor","Motril","Murtas","Nevada","Nigüelas","Nívar","Ogíjares","Orce","Otívar","Padul","Pampaneira","Pedro-Martínez","Peligros","Pinos-Genil","Pinos-Puente","Puebla-de-Don-Fadrique","Pulianas","Purullena","Pórtugos","Quéntar","Salobreña","Santa-Cruz-del-Comercio","Santa-Fe","Soportújar","Sorvilán","Taha","Torvizcón","Trevélez","Turón",
+    "Ugíjar","Valle-del-Zalabí","Vegas-del-Genil","Ventas-de-Huelma","Villamena","Villanueva-Mesía","Villanueva-de-las-Torres","Válor","Vélez-de-Benaudalla","Víznar","Zafarraya","Zagra","Zubia","Órgiva","Aljaraque","Almonaster-la-Real","Almonte","Alosno","Alájar","Aracena","Aroche","Arroyomolinos-de-León","Ayamonte","Beas","Bollullos-Par-del-Condado","Bonares","Cabezas-Rubias","Cala","Calañas","Cartaya","Castaño-del-Robledo","Cañaveral-de-León","Chucena","Corteconcepción","Cortelazor","Cumbres-Mayores","Encinasola","Escacena-del-Campo","Fuenteheridos","Galaroza","Gibraleón","Granada-de-Río-Tinto",
+    "Granado","Higuera-de-la-Sierra","Hinojales","Hinojos","Huelva","Isla-Cristina","Jabugo","Lepe","Linares-de-la-Sierra","Lucena-del-Puerto","Manzanilla","Minas-de-Riotinto","Moguer","Nerva","Niebla","Palma-del-Condado","Palos-de-la-Frontera","Paterna-del-Campo","Paymogo","Puebla-de-Guzmán","Puerto-Moral","Punta-Umbría","Rociana-del-Condado","Rosal-de-la-Frontera","San-Bartolomé-de-la-Torre","San-Juan-del-Puerto","Sanlúcar-de-Guadiana","Santa-Ana-la-Real","Santa-Bárbara-de-Casa","Santa-Olalla-del-Cala","Trigueros","Valdelarco","Valverde-del-Camino","Villablanca","Villalba-del-Alcor","Villanueva-de-los-Castillejos","Villarrasa","Zalamea-la-Real","Zufre","Albanchez-de-Mágina","Alcalá-la-Real",
+    "Alcaudete","Aldeaquemada","Andújar","Arjona","Arjonilla","Arquillos","Arroyo-del-Ojanco","Baeza","Bailén","Baños-de-la-Encina","Beas-de-Segura","Bedmar-y-Garcíez","Begíjar","Cabra-del-Santo-Cristo","Cambil","Campillo-de-Arenas","Carboneros","Carolina","Castellar","Castillo-de-Locubín","Cazalilla","Chiclana-de-Segura","Chilluévar","Cárcheles","Escañuela","Espelúy","Frailes","Fuensanta-de-Martos","Fuerte-del-Rey","Guarromán","Génave","Hinojares","Huelma","Huesa","Ibros","Iznatoraf","Jabalquinto","Jamilena","Jaén","Jimena","Jódar","Linares","Lopera","Lupión","Mancha-Real","Marmolejo","Martos","Mengíbar","Montizón","Noalejo","Orcera","Peal-de-Becerro","Pegalajar","Pozo-Alcón","Puente-de-Génave","Quesada","Rus","Sabiote","Santiago-de-Calatrava","Santiago-Pontones","Santisteban-del-Puerto","Segura-de-la-Sierra","Siles","Torre-del-Campo","Torreblascopedro","Torredonjimeno","Torreperogil","Torres-de-Albánchez","Valdepeñas-de-Jaén","Vilches","Villacarrillo","Villanueva-de-la-Reina","Villanueva-del-Arzobispo","Villardompardo","Villarrodrigo","Villatorres","Alcaucín","Alfarnate","Alfarnatejo","Algarrobo","Algatocín",
+    "Alhaurín-de-la-Torre","Alhaurín-el-Grande","Almargen","Almogía","Almáchar","Alozaina","Alpandeire","Antequera","Ardales","Arenas","Arriate","Atajate","Benahavís","Benalauría","Benalmádena","Benamargosa","Benamocarra","Benaoján","Benarrabá","Borge","Burgo","Canillas-de-Aceituno","Canillas-de-Albaida","Carratraca","Casabermeja","Casarabonela","Casares","Cañete-la-Real","Colmenar","Comares","Cortes-de-la-Frontera","Coín","Cuevas-Bajas","Cuevas-de-San-Marcos","Cártama","Cómpeta","Cútar","Estepona","Frigiliana","Fuente-de-Piedra","Gaucín","Genalguacil","Guaro","Humilladero","Igualeja","Istán","Iznate","Jimera-de-Líbar","Jubrique","Júzcar","Macharaviaya","Manilva","Marbella","Mijas","Moclinejo","Mollina","Monda","Montejaque","Málaga","Nerja","Ojén","Parauta","Periana","Pizarra","Rincón-de-la-Victoria","Ronda","Salares","Sayalonga","Sedella","Sierra-de-Yeguas","Teba","Tolox","Torremolinos","Torrox","Totalán","Valle-de-Abdalajís","Villanueva-de-Algaidas","Villanueva-de-Tapia","Villanueva-del-Trabuco","Vélez-Málaga","Yunquera","Álora","Árchez","Alanís",
+    "Albaida-del-Aljarafe","Alcalá-de-Guadaíra","Alcalá-del-Río","Alcolea-del-Río","Algaba","Algámitas","Almadén-de-la-Plata","Almensilla","Arahal","Aznalcázar","Aznalcóllar","Badolatosa","Benacazón","Bollullos-de-la-Mitación","Bormujos","Brenes","Cabezas-de-San-Juan","Camas","Campana","Cantillana","Carmona","Carrión-de-los-Céspedes","Casariche","Castilblanco-de-los-Arroyos","Castilleja-de-Guzmán","Castilleja-de-la-Cuesta","Castilleja-del-Campo","Cazalla-de-la-Sierra","Cañada-Rosal","Constantina","Coria-del-Río","Coripe","Coronil","Dos-Hermanas","Espartinas","Estepa","Fuentes-de-Andalucía","Garrobo","Gelves","Gerena","Gilena","Gines","Guadalcanal",
+    "Guillena","Herrera","Isla-Mayor","Lantejuela","Lebrija","Lora-de-Estepa","Lora-del-Río","Luisiana","Madroño","Mairena-del-Alcor","Mairena-del-Aljarafe","Marchena","Marinaleda","Martín-de-la-Jara","Morón-de-la-Frontera","Navas-de-la-Concepción","Osuna","Palacios-y-Villafranca","Palomares-del-Río","Paradas","Peñaflor","Pilas","Pruna","Puebla-de-Cazalla","Puebla-de-los-Infantes","Puebla-del-Río","Real-de-la-Jara","Rinconada","Ronquillo","Salteras","San-Juan-de-Aznalfarache","Sanlúcar-la-Mayor","Santiponce","Saucejo",
+    "Sevilla","Tocina","Tomares","Umbrete","Utrera","Valencina-de-la-Concepción","Villamanrique-de-la-Condesa","Villanueva-de-San-Juan","Villanueva-del-Ariscal","Villanueva-del-Río-y-Minas","Villaverde-del-Río","Viso-del-Alcor","Écija"];
+    var winnerNumber = 100000;
+
+    for (var b = 0; b < list_citys.length; b++) {
+        var distance = levenshtein_distance(cityname, list_citys[b]);
+        if (distance < winnerNumber) {
+            winnerNumber = distance;
+            winner = list_citys[b]; 
+        }
+    }
+
+  } 
+
   if(type === "allTypes") type = null;
-  var query = getQuery(cityname,datafont,bathnum,bednum,pricemin,pricemax,type);
+  var query = getQuery(winner,datafont,bathnum,bednum,pricemin,pricemax,type);
   getMap2(res,query,zoom);
 });
 
@@ -422,4 +451,40 @@ function getMap2(res,query,zoom) {
   });
 };
 
+function blankArray(length){
+  var temp = [];
+  for (var a = 0; a < length; a++) {
+      temp[a] = 0;    
+  }
+  return temp;
+}
+
+function levenshtein_distance(pattern,text){
+  var i = 0, i2 = 0, matrix = [], width = text.length, height = pattern.length;
+      
+  for (i = 0; i <= width; i++) {
+      matrix[i] = blankArray(height+1);
+      matrix[i][0] = i;
+  }
+  
+  for (i = 0; i <= height; i++) {
+      matrix[0][i] = i;    
+  }
+  
+  for (i = 1; i <= height; i++) {
+      for (i2 = 1; i2 <= width; i2++) {
+          if (pattern[i-1] === text[i2-1]) {
+              matrix[i2][i] = matrix[i2-1][i-1];    
+          } else {
+              var deletion = matrix[i2-1][i] + 1;
+              var insertion = matrix[i2][i-1] + 1;
+              var substitution = matrix[i2-1][i-1] + 1;
+              matrix[i2][i] = Math.min(deletion, insertion, substitution);                                    
+          }
+      }
+  }
+  return matrix[width][height];
+};
+
 module.exports = router;
+
