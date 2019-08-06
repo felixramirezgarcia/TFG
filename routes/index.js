@@ -66,6 +66,8 @@ router.post('/map', isAuthenticated, function(req, res, next) {
 
   if(cityname){
     zoom = 14;
+
+    var replaced = cityname.split(' ').join('-');
     var list_citys = [
     "Abla","Abrucena","Adra","Alboloduy","Albánchez","Alcudia-de-Monteagud","Alcóntar","Alhabia","Alhama-de-Almería","Alicún","Almería","Alsodux","Arboleas","Armuña-de-Almanzora","Bacares","Bayarque","Bayárcal","Beires","Benahadux","Benitagla","Benizalón","Bentarique","Berja","Bédar","Canjáyar","Cantoria","Carboneras","Chercos","Chirivel","Cuevas-del-Almanzora","Cóbdar","Dalías","Ejido","Enix","Felix","Fines","Fiñana","Fondón","Garrucha","Gádor","Gérgal","Huécija","Huércal-de-Almería","Huércal-Overa","Illar","Instinción","Laroya","Lubrín","Lucainena-de-las-Torres","Láujar-de-Andarax","Líjar",
     "Lúcar","Macael","María","Mojonera","Mojácar","Nacimiento","Níjar","Ohanes","Olula-de-Castro","Olula-del-Río","Oria","Padules","Partaloa","Paterna-del-Río","Pulpí","Purchena","Roquetas-de-Mar","Rágol","Santa-Fe-de-Mondújar","Serón","Sierro","Sorbas","Suflí","Tabernas","Taberno","Tahal","Terque","Tres-Villas","Turre","Turrillas","Tíjola","Uleila-del-Campo","Urrácal","Velefique","Vera","Viator","Vélez-Blanco","Vélez-Rubio","Vícar","Zurgena","Alcalá-de-los-Gazules","Algeciras","Algodonales","Arcos-de-la-Frontera","Barbate","Benalup-Casas-Viejas","Benaocaz",
@@ -83,7 +85,7 @@ router.post('/map', isAuthenticated, function(req, res, next) {
     var winnerNumber = 100000;
 
     for (var b = 0; b < list_citys.length; b++) {
-        var distance = levenshtein_distance(cityname, list_citys[b]);
+        var distance = levenshtein_distance(replaced, list_citys[b]);
         if (distance < winnerNumber) {
             winnerNumber = distance;
             winner = list_citys[b]; 
@@ -378,6 +380,7 @@ function getQuery(cityname,datafont,bathnum,bednum,pricemin,pricemax,type) {
 function getMap1(res) {
   var House = require('../models/houseschema');
   var position = {lat: 37.6000000, lng: -4.5000000};
+  var init_map = 1;
 
   House.distinct("city").exec((err,citys) => {
     if(err){
@@ -394,7 +397,7 @@ function getMap1(res) {
             });
           }else{
             if(houses){
-              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0, qry : query});
+              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0, qry:query, init:init_map});
             }else{
               res.status(404).send({
                 message: 'No hay casas'
@@ -413,6 +416,7 @@ function getMap1(res) {
 
 function getMap2(res,query,zoom) {
   var House = require('../models/houseschema');
+  var init_map = 0;
 
   House.distinct("city").exec((err,citys) => {
     if(err){
@@ -430,15 +434,15 @@ function getMap2(res,query,zoom) {
             if(houses && Array.isArray(houses) && houses.length >=1){
               if(houses[0].latitude && houses[0].longitude){
                 var position = {lat: houses[0].latitude, lng: houses[0].longitude};
-                res.render('map',{array: houses, location:citys, middle:position, zum:zoom, error:0, qry : query});
+                res.render('map',{array: houses, location:citys, middle:position, zum:zoom, error:0, qry : query, init:init_map});
               }else{
                 var position = {lat: 37.6000000, lng: -4.5000000};
-                res.render('map',{array: houses, location:citys, middle:position, zum:zoom, error:0, qry : query});
+                res.render('map',{array: houses, location:citys, middle:position, zum:zoom, error:0, qry : query, init:init_map});
               }
             }else{
               var position = {lat: 37.6000000, lng: -4.5000000};
               var qery = {alert: "Viviendas no encontradas"};
-              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0, qry : qery});
+              res.render('map',{array:houses, location:citys, middle:position, zum:8, error:0, qry : qery, init:init_map});
             }
           }
         });

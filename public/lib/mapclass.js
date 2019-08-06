@@ -1,6 +1,6 @@
 class Mapa {
 
-    constructor(mid, zu, idElement, err, arr) {
+    constructor(mid, zu, idElement, err, arr, init_map) {
         const classob = new Datos(err, arr);
         
         this.map = new google.maps.Map(document.getElementById(idElement), {
@@ -10,31 +10,22 @@ class Mapa {
 
         this.centro = mid;
         this.infowindow = new google.maps.InfoWindow();
-        this.colorRojo = "FE7569";
-        this.colorNaranja = "EEAC69";
-        this.colorAmarillo = "ECF361";
-        this.colorAzul = "61BAF3";
-        this.colorVerde = "5AB440";
-        this.rojo = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorRojo,
-            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
-        this.naranja = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorNaranja,
-            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
-        this.amarillo = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorAmarillo,
-            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
-        this.azul = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorAzul,
-            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
-        this.verde = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorVerde,
-            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
-        this.pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-            new google.maps.Size(40, 37), new google.maps.Point(0, 0), new google.maps.Point(12, 35));
 
+        if(init_map === 0){
+            this.initColors();
+            this.places = classob.getData();
+            this.markers = [];
+            this.printMarkers();
+            this.points = this.convertPoints();
+        }else if(init_map === 1){
+            this.places = classob.getCitys();
+            this.markers = [];
+            this.printInitMarkers(classob.getCount());
+        }
+        
 
-        this.places = classob.getData();
-        this.markers = [];
-        this.printMarkers();
         this.toggleMarker = true;
         this.toggleHeatmapFlag = false;
-        this.points = this.convertPoints();
         this.heatmap = new google.maps.visualization.HeatmapLayer({
             data: this.points,
             map: this.map
@@ -44,6 +35,22 @@ class Mapa {
         this.heatmap.set('maxIntensity', 61);
 
         this.drawHeatmap(null);
+    }
+
+    printInitMarkers(count) {
+        for (let j = 0; j < this.places.length; j++) {
+            this.markers.push(new google.maps.Marker({
+                map: this.map,
+                position: {lat: this.places[j].lat, lng: this.places[j].lng},
+                label: {
+                    color: 'black',
+                    fontWeight: 'bold',
+                    fontSize: '10px',
+                    text: count[j]
+                }
+            }));
+        }
+
     }
 
     convertPoints() {
@@ -117,6 +124,27 @@ class Mapa {
         return temp;
     }
 
+    initColors(){
+        this.colorRojo = "FE7569";
+        this.colorNaranja = "EEAC69";
+        this.colorAmarillo = "ECF361";
+        this.colorAzul = "61BAF3";
+        this.colorVerde = "5AB440";
+        this.rojo = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorRojo,
+            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+        this.naranja = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorNaranja,
+            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+        this.amarillo = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorAmarillo,
+            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+        this.azul = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorAzul,
+            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+        this.verde = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + this.colorVerde,
+            new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+        this.pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+            new google.maps.Size(40, 37), new google.maps.Point(0, 0), new google.maps.Point(12, 35));
+
+    }
+
     toggleMarkers() {
         if (this.toggleMarker) {
             this.toggleMarker = false;
@@ -170,7 +198,6 @@ class Mapa {
                     if (this.places[j].propertyType === 'house') aux = "Casa"
                     else if (this.places[j].propertyType === 'flat') aux = "Piso"
                     else if (this.places[j].propertyType === 'property') aux = "Propiedad"
-                    console.log("Campo places ",this.places[j]);
                     let a = '<div align="center">' +
                         '<p>Tipo de vivienda: ' + aux + '</p>' +
                         '<p>Fuente de datos: ' + this.places[j].datasourceName + '</p>' +

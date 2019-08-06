@@ -9,7 +9,7 @@
 
 <!------------------  sidenav  ------------------------->
 <div id="mySidenav" class="sidenav">
-    <!-- <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <!------------------  query form  ------------------------->
 
     <div>
@@ -110,8 +110,15 @@
         let arr = <%- JSON.stringify(array) %>;
         let mid = <%- JSON.stringify(middle) %>;
         let zu = <%= zum %>;
+        let init_map = <%= init %>;
 
-        map = new Mapa(mid,zu,"map",err,arr);
+        if(init_map === 0){
+            map = new Mapa(mid,zu,"map",err,arr,init_map);
+        }else if(init_map === 1){
+            map = new Mapa(mid,zu,"map",err,arr,init_map);
+        }
+
+        
     }
     
 </script>
@@ -193,7 +200,13 @@ var cities = [];
     cities.push("<%= location[i] %>");
 <% } %>
 
-autocomplete(document.getElementById("inputCity"), cities);
+var replaced = [];
+for (var i = 0; i < cities.length; i++) {
+    var aux = cities[i].split('-').join(' ');
+    replaced.push(aux);
+}
+
+autocomplete(document.getElementById("inputCity"), replaced);
 </script>
 
 
@@ -216,7 +229,6 @@ autocomplete(document.getElementById("inputCity"), cities);
     }
 
 cargar_fuente_datos();
-
 </script>
 
 <!------------------  alert data not found  -------------------------> 
